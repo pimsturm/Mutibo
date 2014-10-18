@@ -1,6 +1,8 @@
 package mutibo.moviesets;
 
+import mutibo.moviesets.repository.MovieRepository;
 import mutibo.moviesets.repository.MovieSetRepository;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableAutoConfiguration
 // Tell Spring to automatically create a JPA implementation of our
 // MutiboRepository
-@EnableJpaRepositories(basePackageClasses = MovieSetRepository.class)
+@EnableJpaRepositories(basePackageClasses = {MovieRepository.class, MovieSetRepository.class})
 // Tell Spring that this object represents a Configuration for the
 // application
 @Configuration
