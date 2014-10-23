@@ -1,43 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/movieListViewLayout"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@drawable/radialback"
+    tools:context="mutiboclient.moviesets.org.mutibo.MainActivity">
 
-    <!-- Row for Buttons -->
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="3dp" >
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/btn_start_game"
+        android:id="@+id/btnStartGame" />
 
-        <Button
-            android:id="@+id/movie_listview_create"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:onClick="test"
-            android:text="@string/movie_list_button_label_add" />
-
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/movie_listview_tags_filter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/movie_list_filter_hint" >
-
-        <requestFocus />
-    </EditText>
-
-    <ListView
-        android:id="@+id/android:list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
-
-</LinearLayout>
-
+</RelativeLayout>
