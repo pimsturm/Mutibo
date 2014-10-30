@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">Mutibo</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="movie_list_button_label_add">Add a movie</string>
+    <string name="movie_list_filter_hint">Title Filter...</string>
     <string name="action_settings">Settings</string>
 
 </resources>
