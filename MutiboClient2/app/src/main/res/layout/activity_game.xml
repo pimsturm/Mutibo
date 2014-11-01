@@ -16,7 +16,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:textSize="30dp" />
+        android:textSize="20sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="false"
-        android:textSize="30dp" />
+        android:textSize="20sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
         android:id="@+id/txtHints"
         android:layout_toRightOf="@id/txtScore"
         android:layout_below="@+id/txtUsername"
-        android:textSize="30sp"
+        android:textSize="20sp"
      />
 
     <TextView
@@ -50,16 +50,24 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="46sp" />
 
+    <RadioGroup
+        android:id="@+id/rgGameOptions"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtGameQuestion"
+        >
+
     <RadioButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Movie1"
         android:id="@+id/rbtnGameOption1"
-        android:layout_below="@+id/txtGameQuestion"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="48sp"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
 
     <RadioButton
         android:layout_width="wrap_content"
@@ -69,7 +77,7 @@
         android:layout_below="@+id/rbtnGameOption1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
 
     <RadioButton
         android:layout_width="wrap_content"
@@ -79,7 +87,7 @@
         android:layout_below="@+id/rbtnGameOption2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
 
     <RadioButton
         android:layout_width="wrap_content"
@@ -89,15 +97,16 @@
         android:layout_below="@+id/rbtnGameOption3"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
+    </RadioGroup>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
         android:id="@+id/btnGameSubmit"
-        android:textSize="30sp"
-        android:layout_below="@+id/rbtnGameOption4"
+        android:textSize="20sp"
+        android:layout_below="@+id/rgGameOptions"
         android:layout_marginTop="48sp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

@@ -13,12 +13,18 @@ public class MovieSet {
 
     private int rating;
 
+    private int correctAnswer;
+
     MovieSet () {
         movieTitles = new ArrayList<String>();
     }
 
     public void addMovieTitle(String title) {
         this.movieTitles.add(title);
+    }
+
+    public void clearMovieTitles() {
+        this.movieTitles.clear();
     }
 
     public ArrayList<String> getMovieTitles() {
@@ -45,4 +51,9 @@ public class MovieSet {
 
     public void setRating(int rating) {this.rating = rating;}
 
+    public int getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setCorrectAnswer(int correctAnswer) {this.correctAnswer = correctAnswer;}
 }

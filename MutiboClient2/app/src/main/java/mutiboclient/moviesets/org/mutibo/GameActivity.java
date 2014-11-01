@@ -4,10 +4,16 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 
 public class GameActivity extends Activity {
@@ -19,6 +25,23 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        final Button btnGameSubmit = (Button) findViewById(R.id.btnGameSubmit);
+
+        btnGameSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final RadioGroup groupGameOptions = (RadioGroup) findViewById(R.id.rgGameOptions);
+
+                int selectedOption = groupGameOptions.getCheckedRadioButtonId();
+
+                if (selectedOption > -1) {
+                    View radioButton = groupGameOptions.findViewById(selectedOption);
+                    int radioId = groupGameOptions.indexOfChild(radioButton);
+                    Toast.makeText(getApplicationContext(), "Answer: " + Integer.toString(radioId), LENGTH_SHORT).show();
+                }
+            }
+        });
 
         loadGameData();
 
@@ -62,7 +85,7 @@ public class GameActivity extends Activity {
     }
 
     private void refreshMovieSet(){
-        MovieSet movieSet = movieSets.get(gameStatus.getCurrentQuestion() - 1);
+        MovieSet movieSet = movieSets.get(gameStatus.getCurrentQuestion()- 1);
         int[] radioButtons = {R.id.rbtnGameOption1, R.id.rbtnGameOption2,
                 R.id.rbtnGameOption3, R.id.rbtnGameOption4};
 
@@ -73,6 +96,10 @@ public class GameActivity extends Activity {
             radioButtonNumber++;
 
         }
+
+    }
+
+    private void processAnswer() {
 
     }
 
@@ -95,9 +122,26 @@ public class GameActivity extends Activity {
         movieSet.addMovieTitle("Tron");
         movieSet.addMovieTitle("Snow White");
 
+        movieSet.setCorrectAnswer(4);
+
         movieSet.setExplanation("Snow White is the only movie in this set that's not about computer science.");
 
         movieSet.setHint("Computer science");
+
+        movieSets.add(movieSet);
+
+        movieSet.setId(2L);
+        movieSet.clearMovieTitles();
+        movieSet.addMovieTitle("The Grand Budapest Hotel");
+        movieSet.addMovieTitle("Around the World in 80 Days");
+        movieSet.addMovieTitle("The Other Guys");
+        movieSet.addMovieTitle("Zoolander");
+
+        movieSet.setCorrectAnswer(3);
+
+        movieSet.setExplanation("The actor Owen Wilson had a role in all movies except in The Other Guys.");
+
+        movieSet.setHint("Actor");
 
         movieSets.add(movieSet);
 
