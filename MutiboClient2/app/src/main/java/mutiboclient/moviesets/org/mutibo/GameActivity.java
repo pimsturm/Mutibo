@@ -9,17 +9,16 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
+enum GameInfoStatus {NONE, HINT, EXPLANATION}
 
 public class GameActivity extends Activity {
 
     private ArrayList<MovieSet> movieSets;
     private GameStatus gameStatus;
+    private GameInfoStatus gameInfoStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +30,23 @@ public class GameActivity extends Activity {
         btnGameSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final RadioGroup groupGameOptions = (RadioGroup) findViewById(R.id.rgGameOptions);
+                processAnswer();
+                refreshStatus();
+                refreshMovieSet();
+            }
+        });
 
-                int selectedOption = groupGameOptions.getCheckedRadioButtonId();
+        final Button btnGameNext = (Button) findViewById(R.id.btnNext);
 
-                if (selectedOption > -1) {
-                    View radioButton = groupGameOptions.findViewById(selectedOption);
-                    int radioId = groupGameOptions.indexOfChild(radioButton);
-                    Toast.makeText(getApplicationContext(), "Answer: " + Integer.toString(radioId), LENGTH_SHORT).show();
-                }
+        btnGameNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Move to the next question
+                gameStatus.nextQuestion();
+                // Reset the status of the infobox at the bottom
+                gameInfoStatus = GameInfoStatus.NONE;
+                refreshStatus();
+                refreshMovieSet();
             }
         });
 
@@ -81,11 +88,10 @@ public class GameActivity extends Activity {
         final TextView txtHints = (TextView) findViewById(R.id.txtHints);
         txtHints.setText(new StringBuilder().append(getString(R.string.game_hints)).append(gameStatus.getAvailableHints()).toString());
 
-
     }
 
     private void refreshMovieSet(){
-        MovieSet movieSet = movieSets.get(gameStatus.getCurrentQuestion()- 1);
+        MovieSet movieSet = getCurrentMovieSet();
         int[] radioButtons = {R.id.rbtnGameOption1, R.id.rbtnGameOption2,
                 R.id.rbtnGameOption3, R.id.rbtnGameOption4};
 
@@ -97,13 +103,55 @@ public class GameActivity extends Activity {
 
         }
 
+        final TextView txtGameInfo = (TextView) findViewById(R.id.txtGameInfo);
+        switch (gameInfoStatus) {
+            case NONE:
+                txtGameInfo.setText("");
+                break;
+            case HINT:
+                txtGameInfo.setText(movieSet.getHint());
+                break;
+            case EXPLANATION:
+                txtGameInfo.setText(movieSet.getExplanation());
+                break;
+        }
+
+    }
+
+    private int getSelectedAnswer() {
+        final RadioGroup groupGameOptions = (RadioGroup) findViewById(R.id.rgGameOptions);
+
+        int selectedOption = groupGameOptions.getCheckedRadioButtonId();
+
+        if (selectedOption > -1) {
+            View radioButton = groupGameOptions.findViewById(selectedOption);
+            return groupGameOptions.indexOfChild(radioButton);
+        }
+        else {
+            return -1;
+        }
+
     }
 
     private void processAnswer() {
+        MovieSet movieSet = getCurrentMovieSet();
+        int selectedAnswer = getSelectedAnswer();
+
+        if (movieSet.getCorrectAnswer() == selectedAnswer) {
+            gameStatus.setScore(gameStatus.getScore() + 1);
+        }
+
+        gameInfoStatus = GameInfoStatus.EXPLANATION;
 
     }
 
+    private MovieSet getCurrentMovieSet() {
+        return movieSets.get(gameStatus.getCurrentQuestion()- 1);
+    }
+
     private void loadGameData() {
+        gameInfoStatus = GameInfoStatus.NONE;
+
         gameStatus = new GameStatus();
         gameStatus.setUserName("Pim");
         gameStatus.setAvailableHints(3);
@@ -122,7 +170,7 @@ public class GameActivity extends Activity {
         movieSet.addMovieTitle("Tron");
         movieSet.addMovieTitle("Snow White");
 
-        movieSet.setCorrectAnswer(4);
+        movieSet.setCorrectAnswer(3);
 
         movieSet.setExplanation("Snow White is the only movie in this set that's not about computer science.");
 
@@ -130,6 +178,7 @@ public class GameActivity extends Activity {
 
         movieSets.add(movieSet);
 
+        movieSet = new MovieSet();
         movieSet.setId(2L);
         movieSet.clearMovieTitles();
         movieSet.addMovieTitle("The Grand Budapest Hotel");
@@ -137,13 +186,15 @@ public class GameActivity extends Activity {
         movieSet.addMovieTitle("The Other Guys");
         movieSet.addMovieTitle("Zoolander");
 
-        movieSet.setCorrectAnswer(3);
+        movieSet.setCorrectAnswer(2);
 
         movieSet.setExplanation("The actor Owen Wilson had a role in all movies except in The Other Guys.");
 
         movieSet.setHint("Actor");
 
         movieSets.add(movieSet);
+
+        gameStatus.setQuestionCount(movieSets.size());
 
     }
 }

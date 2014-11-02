@@ -13,6 +13,9 @@ public class GameStatus {
 
     private int currentQuestion = 1;
 
+    // Number of questions in a game
+    private int QuestionCount = 10;
+
     GameStatus() {}
 
     public void setAvailableHints(int availableHints) {
@@ -23,8 +26,19 @@ public class GameStatus {
         return availableHints;
     }
 
+    public void setQuestionCount(int questionCount) {this.QuestionCount = questionCount;}
+
     public void setCurrentQuestion(int currentQuestion) {
         this.currentQuestion = currentQuestion;
+    }
+
+    public void nextQuestion() {
+        int currentQuestion = getCurrentQuestion();
+        if (currentQuestion == this.QuestionCount) {
+            setCurrentQuestion(1);
+        } else {
+            setCurrentQuestion(currentQuestion + 1);
+        }
     }
 
     public int getCurrentQuestion() {

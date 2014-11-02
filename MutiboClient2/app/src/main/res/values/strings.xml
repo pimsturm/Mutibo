@@ -14,5 +14,7 @@
     <string name="game_user_name">User: </string>
     <string name="game_score">Score: </string>
     <string name="game_hints">Hints: </string>
+    <string name="game_next">Next</string>
+    <string name="game_submit">Submit</string>
 
 </resources>

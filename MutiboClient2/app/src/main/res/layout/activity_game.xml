@@ -103,12 +103,35 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="@string/game_submit"
         android:id="@+id/btnGameSubmit"
         android:textSize="20sp"
         android:layout_below="@+id/rgGameOptions"
         android:layout_marginTop="48sp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/game_next"
+        android:id="@+id/btnNext"
+        android:textSize="20sp"
+        android:layout_toRightOf="@id/btnGameSubmit"
+        android:layout_below="@id/rgGameOptions"
+        android:layout_marginTop="48sp"
+         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="placeholder"
+        android:id="@+id/txtGameInfo"
+        android:layout_below="@+id/btnGameSubmit"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15sp" />
+
 
 </RelativeLayout>
