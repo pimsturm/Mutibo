@@ -1,6 +1,7 @@
 package mutiboclient.moviesets.org.mutibo;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,12 +96,31 @@ public class GameActivity extends Activity {
         int[] radioButtons = {R.id.rbtnGameOption1, R.id.rbtnGameOption2,
                 R.id.rbtnGameOption3, R.id.rbtnGameOption4};
 
+        final RadioGroup groupGameOptions = (RadioGroup) findViewById(R.id.rgGameOptions);
+        groupGameOptions.clearCheck();
+
         int radioButtonNumber = 0;
         for (String movieTitle : movieSet.getMovieTitles()) {
-            final RadioButton RadioButton = (RadioButton) findViewById(radioButtons[radioButtonNumber]);
-            RadioButton.setText(movieTitle);
+            final RadioButton radioButton = (RadioButton) findViewById(radioButtons[radioButtonNumber]);
+            radioButton.setText(movieTitle);
+            radioButton.setBackgroundColor(groupGameOptions.getDrawingCacheBackgroundColor());
             radioButtonNumber++;
+        }
 
+        final Button btnSubmit = (Button) findViewById(R.id.btnGameSubmit);
+        int givenAnswer = movieSet.getGivenAnswer();
+        if (givenAnswer > -1) {
+            final RadioButton selectedButton = (RadioButton) findViewById(radioButtons[givenAnswer]);
+            selectedButton.setChecked(true);
+            if (movieSet.isCorrectAnswer()) {
+                selectedButton.setBackgroundColor(Color.GREEN);
+            } else {
+                selectedButton.setBackgroundColor(Color.RED);
+            }
+
+            btnSubmit.setEnabled(false);
+        } else {
+            btnSubmit.setEnabled(true);
         }
 
         final TextView txtGameInfo = (TextView) findViewById(R.id.txtGameInfo);
@@ -135,9 +155,9 @@ public class GameActivity extends Activity {
 
     private void processAnswer() {
         MovieSet movieSet = getCurrentMovieSet();
-        int selectedAnswer = getSelectedAnswer();
+        movieSet.setGivenAnswer(getSelectedAnswer());
 
-        if (movieSet.getCorrectAnswer() == selectedAnswer) {
+        if (movieSet.isCorrectAnswer()) {
             gameStatus.setScore(gameStatus.getScore() + 1);
         }
 

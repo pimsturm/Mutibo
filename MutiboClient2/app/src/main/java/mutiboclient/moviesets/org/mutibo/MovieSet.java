@@ -15,8 +15,11 @@ public class MovieSet {
 
     private int correctAnswer;
 
+    private int givenAnswer;
+
     MovieSet () {
         movieTitles = new ArrayList<String>();
+        givenAnswer = -1;
     }
 
     public void addMovieTitle(String title) {
@@ -56,4 +59,12 @@ public class MovieSet {
     }
 
     public void setCorrectAnswer(int correctAnswer) {this.correctAnswer = correctAnswer;}
+
+    public int getGivenAnswer() {return this.givenAnswer;}
+
+    public void setGivenAnswer(int givenAnswer) {this.givenAnswer = givenAnswer;}
+
+    public Boolean isCorrectAnswer() {
+        return this.getCorrectAnswer() == this. getGivenAnswer();
+    }
 }
