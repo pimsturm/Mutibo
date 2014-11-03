@@ -17,9 +17,12 @@ public class MovieSet {
 
     private int givenAnswer;
 
+    private Boolean askedHint;
+
     MovieSet () {
         movieTitles = new ArrayList<String>();
         givenAnswer = -1;
+        askedHint = false;
     }
 
     public void addMovieTitle(String title) {
@@ -45,6 +48,10 @@ public class MovieSet {
     public String getHint() {return this.hint;}
 
     public void setHint (String hint) {this.hint = hint;}
+
+    public Boolean getAskedHint() {return this.askedHint;}
+
+    public void setAskedHint (Boolean askedHint) {this.askedHint = askedHint;}
 
     public String getExplanation() {return this.explanation;}
 

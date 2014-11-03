@@ -16,5 +16,9 @@
     <string name="game_hints">Hints: </string>
     <string name="game_next">Next</string>
     <string name="game_submit">Submit</string>
+    <string name="game_username">Username:</string>
+    <string name="game_hints_count">Hints:</string>
+    <string name="game_wrong">Wrong:</string>
+    <string name="game_hint">Hint</string>
 
 </resources>

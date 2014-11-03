@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -20,6 +22,7 @@ public class GameActivity extends Activity {
     private ArrayList<MovieSet> movieSets;
     private GameStatus gameStatus;
     private GameInfoStatus gameInfoStatus;
+    private static final String TAG = "GameActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +45,30 @@ public class GameActivity extends Activity {
         btnGameNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Move to the next question
-                gameStatus.nextQuestion();
-                // Reset the status of the infobox at the bottom
-                gameInfoStatus = GameInfoStatus.NONE;
+                nextQuestion();
                 refreshStatus();
                 refreshMovieSet();
+            }
+        });
+
+        final Button btnGameHint = (Button) findViewById(R.id.btnGameHint);
+        btnGameHint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processHint();
+                refreshStatus();
+                refreshMovieSet();
+            }
+        });
+
+        final RatingBar rbGameRating = (RatingBar) findViewById(R.id.rbGameRating);
+        rbGameRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                MovieSet movieSet = getCurrentMovieSet();
+                movieSet.setRating((int) ratingBar.getRating());
+                Log.v(TAG, Float.toString(ratingBar.getRating()));
+
             }
         });
 
@@ -89,6 +110,9 @@ public class GameActivity extends Activity {
         final TextView txtHints = (TextView) findViewById(R.id.txtHints);
         txtHints.setText(new StringBuilder().append(getString(R.string.game_hints)).append(gameStatus.getAvailableHints()).toString());
 
+        final TextView txtWrong = (TextView) findViewById(R.id.txtWrong);
+        txtWrong.setText(new StringBuilder().append(getString(R.string.game_wrong)).append(gameStatus.getWrongAnswers()));
+
     }
 
     private void refreshMovieSet(){
@@ -107,6 +131,7 @@ public class GameActivity extends Activity {
             radioButtonNumber++;
         }
 
+        final RatingBar rbGameRating = (RatingBar) findViewById(R.id.rbGameRating);
         final Button btnSubmit = (Button) findViewById(R.id.btnGameSubmit);
         int givenAnswer = movieSet.getGivenAnswer();
         if (givenAnswer > -1) {
@@ -119,9 +144,13 @@ public class GameActivity extends Activity {
             }
 
             btnSubmit.setEnabled(false);
+            rbGameRating.setEnabled(true);
         } else {
             btnSubmit.setEnabled(true);
+            rbGameRating.setEnabled(false);
         }
+
+        rbGameRating.setRating(movieSet.getRating());
 
         final TextView txtGameInfo = (TextView) findViewById(R.id.txtGameInfo);
         switch (gameInfoStatus) {
@@ -136,6 +165,34 @@ public class GameActivity extends Activity {
                 break;
         }
 
+        final Button btnGameHint = (Button) findViewById(R.id.btnGameHint);
+        btnGameHint.setEnabled(gameInfoStatus == GameInfoStatus.NONE &&
+            gameStatus.getAvailableHints() > 0);
+
+
+    }
+
+    private void nextQuestion() {
+        // Move to the next question
+        gameStatus.nextQuestion();
+        // Reset the status of the infobox at the bottom
+        gameInfoStatus = GameInfoStatus.NONE;
+
+        MovieSet movieSet = getCurrentMovieSet();
+        if (movieSet.getAskedHint()) {
+            gameInfoStatus = GameInfoStatus.HINT;
+        }
+        if (movieSet.getGivenAnswer() == movieSet.getCorrectAnswer()){
+            gameInfoStatus = GameInfoStatus.EXPLANATION;
+        }
+
+    }
+
+    private void processHint() {
+        MovieSet movieSet = getCurrentMovieSet();
+        movieSet.setAskedHint(true);
+        gameInfoStatus = GameInfoStatus.HINT;
+        gameStatus.setAvailableHints(gameStatus.getAvailableHints() - 1);
     }
 
     private int getSelectedAnswer() {
@@ -159,6 +216,8 @@ public class GameActivity extends Activity {
 
         if (movieSet.isCorrectAnswer()) {
             gameStatus.setScore(gameStatus.getScore() + 1);
+        } else {
+            gameStatus.setWrongAnswers(gameStatus.getWrongAnswers() + 1);
         }
 
         gameInfoStatus = GameInfoStatus.EXPLANATION;

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username:"
+        android:text="@string/game_username"
         android:id="@+id/txtUsername"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -32,12 +32,22 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hints:"
-        android:id="@+id/txtHints"
+        android:text="@string/game_wrong"
+        android:id="@+id/txtWrong"
         android:layout_toRightOf="@id/txtScore"
         android:layout_below="@+id/txtUsername"
         android:textSize="20sp"
      />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/game_hints_count"
+        android:id="@+id/txtHints"
+        android:layout_toRightOf="@id/txtWrong"
+        android:layout_below="@+id/txtUsername"
+        android:textSize="20sp"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -66,7 +76,7 @@
         android:id="@+id/rbtnGameOption1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="48sp"
+        android:layout_marginTop="30sp"
         android:textSize="20sp" />
 
     <RadioButton
@@ -103,13 +113,24 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/game_hint"
+        android:id="@+id/btnGameHint"
+        android:textSize="20sp"
+        android:layout_below="@+id/rgGameOptions"
+        android:layout_marginTop="36sp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/game_submit"
         android:id="@+id/btnGameSubmit"
         android:textSize="20sp"
         android:layout_below="@+id/rgGameOptions"
-        android:layout_marginTop="48sp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_marginTop="36sp"
+        android:layout_toRightOf="@id/btnGameHint"
+         />
 
     <Button
         android:layout_width="wrap_content"
@@ -119,8 +140,15 @@
         android:textSize="20sp"
         android:layout_toRightOf="@id/btnGameSubmit"
         android:layout_below="@id/rgGameOptions"
-        android:layout_marginTop="48sp"
-         />
+        android:layout_marginTop="36sp"
+        />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rbGameRating"
+        android:layout_below="@+id/btnGameSubmit"
+        android:stepSize="1" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -128,10 +156,11 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="placeholder"
         android:id="@+id/txtGameInfo"
-        android:layout_below="@+id/btnGameSubmit"
+        android:layout_below="@+id/rbGameRating"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="15sp" />
+
 
 
 </RelativeLayout>
