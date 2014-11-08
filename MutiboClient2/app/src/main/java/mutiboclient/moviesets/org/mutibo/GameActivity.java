@@ -1,6 +1,10 @@
 package mutiboclient.moviesets.org.mutibo;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,9 +19,13 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import mutiboclient.moviesets.org.contentprovider.MutiboProvider;
+import mutiboclient.moviesets.org.data.MovieSetTable;
+
 enum GameInfoStatus {NONE, HINT, EXPLANATION}
 
-public class GameActivity extends Activity {
+public class GameActivity extends Activity
+    implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private ArrayList<MovieSet> movieSets;
     private GameStatus gameStatus;
@@ -74,10 +82,6 @@ public class GameActivity extends Activity {
 
         loadGameData();
 
-        refreshStatus();
-
-        refreshMovieSet();
-
     }
 
 
@@ -105,10 +109,10 @@ public class GameActivity extends Activity {
         txtUserName.setText(getString(R.string.game_user_name) + gameStatus.getUserName());
 
         final TextView txtScore = (TextView) findViewById(R.id.txtScore);
-        txtScore.setText(new StringBuilder().append(getString(R.string.game_score)).append(gameStatus.getScore()).toString());
+        txtScore.setText(getString(R.string.game_score) + gameStatus.getScore());
 
         final TextView txtHints = (TextView) findViewById(R.id.txtHints);
-        txtHints.setText(new StringBuilder().append(getString(R.string.game_hints)).append(gameStatus.getAvailableHints()).toString());
+        txtHints.setText(getString(R.string.game_hints) + gameStatus.getAvailableHints());
 
         final TextView txtWrong = (TextView) findViewById(R.id.txtWrong);
         txtWrong.setText(new StringBuilder().append(getString(R.string.game_wrong)).append(gameStatus.getWrongAnswers()));
@@ -229,6 +233,8 @@ public class GameActivity extends Activity {
     }
 
     private void loadGameData() {
+        android.util.Log.d(TAG, "loadGameData");
+        getLoaderManager().initLoader(0, null, this);
         gameInfoStatus = GameInfoStatus.NONE;
 
         gameStatus = new GameStatus();
@@ -239,41 +245,57 @@ public class GameActivity extends Activity {
         gameStatus.setScore(0);
         gameStatus.setWrongAnswers(0);
 
+    }
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        android.util.Log.d(TAG, "onCreateLoader");
+        return new CursorLoader(this,
+                MutiboProvider.CONTENT_MOVIESET_URI, null, null, null, null);
+    }
 
-        movieSets = new ArrayList<MovieSet>();
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        android.util.Log.d(TAG, "onLoadFinished");
+        if (cursor != null && cursor.getCount() > 0) {
+            android.util.Log.d(TAG, "cursor");
+            cursor.moveToFirst();
+            int questionNr = 0;
+            movieSets = new ArrayList<MovieSet>();
+            do {
+                questionNr++;
+                movieSets.add(loadGameDataFromCursor(cursor, questionNr));
+            } while (cursor.moveToNext());
+            gameStatus.setQuestionCount(movieSets.size());
+
+            refreshStatus();
+
+            refreshMovieSet();
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // data is not available anymore, delete reference
+
+    }
+
+    private MovieSet loadGameDataFromCursor(Cursor cursor, int questionNr) {
+        android.util.Log.d(TAG, "loadGameDataFromCursor");
         MovieSet movieSet = new MovieSet();
 
-        movieSet.setId(1L);
-        movieSet.addMovieTitle("Hackers");
-        movieSet.addMovieTitle("War Games");
-        movieSet.addMovieTitle("Tron");
-        movieSet.addMovieTitle("Snow White");
+        movieSet.setId(questionNr);
+        movieSet.setRating(cursor.getInt(cursor.getColumnIndex(MovieSetTable.COLUMN_RATING)));
+        movieSet.setCorrectAnswer(cursor.getInt((cursor.getColumnIndex(MovieSetTable.COLUMN_CORRECT_ANSWER))));
+        movieSet.setHint(cursor.getString(cursor.getColumnIndex(MovieSetTable.COLUMN_HINT)));
+        movieSet.setExplanation(cursor.getString(cursor.getColumnIndex(MovieSetTable.COLUMN_EXPLANATION)));
 
-        movieSet.setCorrectAnswer(3);
+        movieSet.addMovieTitle(cursor.getString(cursor.getColumnIndex("movie1")));
+        movieSet.addMovieTitle(cursor.getString(cursor.getColumnIndex("movie2")));
+        movieSet.addMovieTitle(cursor.getString(cursor.getColumnIndex("movie3")));
+        movieSet.addMovieTitle(cursor.getString(cursor.getColumnIndex("movie4")));
 
-        movieSet.setExplanation("Snow White is the only movie in this set that's not about computer science.");
-
-        movieSet.setHint("Computer science");
-
-        movieSets.add(movieSet);
-
-        movieSet = new MovieSet();
-        movieSet.setId(2L);
-        movieSet.clearMovieTitles();
-        movieSet.addMovieTitle("The Grand Budapest Hotel");
-        movieSet.addMovieTitle("Around the World in 80 Days");
-        movieSet.addMovieTitle("The Other Guys");
-        movieSet.addMovieTitle("Zoolander");
-
-        movieSet.setCorrectAnswer(2);
-
-        movieSet.setExplanation("The actor Owen Wilson had a role in all movies except in The Other Guys.");
-
-        movieSet.setHint("Actor");
-
-        movieSets.add(movieSet);
-
-        gameStatus.setQuestionCount(movieSets.size());
+        return movieSet;
 
     }
 }

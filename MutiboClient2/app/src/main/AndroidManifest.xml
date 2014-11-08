@@ -26,6 +26,10 @@
             android:name=".GameActivity"
             android:label="@string/title_activity_game" >
         </activity>
+        <provider
+            android:authorities="mutiboclient.moviesets.org.contentprovider.MutiboProvider"
+            android:multiprocess="true"
+            android:name="mutiboclient.moviesets.org.contentprovider.MutiboProvider"  />
     </application>
 
 </manifest>
