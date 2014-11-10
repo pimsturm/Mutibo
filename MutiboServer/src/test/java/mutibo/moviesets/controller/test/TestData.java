@@ -18,8 +18,8 @@ public class TestData {
 	public static Movie randomMovie() {
 		// Information about the movie
 		// Construct a random identifier using Java's UUID class
-		String id = UUID.randomUUID().toString();
-		String title = "Movie-"+id;
+		long id = 1; //UUID.randomUUID().toString();
+		String title = "Movie-"+ String.valueOf(id);
 		return new Movie(title);
 	}
 	

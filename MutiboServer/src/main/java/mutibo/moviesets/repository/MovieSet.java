@@ -4,26 +4,41 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="movieset")
 public class MovieSet {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="movieset_id")
 	private long id;
 	
 	// set of four titles, referring to movie
-	@ElementCollection
-	@CollectionTable
-	private Set<Movie> movies = new HashSet<Movie>();
+	//@ElementCollection
+	//@CollectionTable
+	//private Set<Movie> movies = new HashSet<Movie>();
+	@Column(name="movie1_id")
+	private long movie1Id;
 	
+	@Column(name="movie2_id")
+	private long movie2Id;
+
+	@Column(name="movie3_id")
+	private long movie3Id;
+
+	@Column(name="movie4_id")
+	private long movie4Id;
+
 	// The id of the movie that is the correct answer
-	private long correctAnswer;
+	private int correctAnswer;
 	
 	// Explanation of the correct answer
 	private String explanation;
@@ -37,7 +52,39 @@ public class MovieSet {
 		
 	}
 	
-	public void setCorrectAnswer(long answerId) {
+	public void setMovie1Id(long movieId){
+		this.movie1Id = movieId;
+	}
+	
+	public long getMovie1Id() {
+		return this.movie1Id;
+	}
+	
+	public void setMovie2Id(long movieId){
+		this.movie2Id = movieId;
+	}
+	
+	public long getMovie2Id() {
+		return this.movie2Id;
+	}
+	
+	public void setMovie3Id(long movieId){
+		this.movie3Id = movieId;
+	}
+	
+	public long getMovie3Id() {
+		return this.movie3Id;
+	}
+	
+	public void setMovie4Id(long movieId){
+		this.movie4Id = movieId;
+	}
+	
+	public long getMovie4Id() {
+		return this.movie4Id;
+	}
+	
+	public void setCorrectAnswer(int answerId) {
 		this.correctAnswer = answerId;
 	}
 	
@@ -61,12 +108,12 @@ public class MovieSet {
 		return this.hint;
 	}
 	
-	public void setMovies(Set<Movie> movies) {
-		this.movies = movies;
-	}
-	
-	public Set<Movie> getMovies() {
-		return this.movies;
-	}
+//	public void setMovies(Set<Movie> movies) {
+//		this.movies = movies;
+//	}
+//	
+//	public Set<Movie> getMovies() {
+//		return this.movies;
+//	}
 
 }
