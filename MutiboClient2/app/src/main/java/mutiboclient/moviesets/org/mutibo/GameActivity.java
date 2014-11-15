@@ -257,7 +257,7 @@ public class GameActivity extends Activity
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         android.util.Log.d(TAG, "onLoadFinished");
         if (cursor != null && cursor.getCount() > 0) {
-            android.util.Log.d(TAG, "cursor");
+            android.util.Log.d(TAG, "cursor count: " + cursor.getCount());
             cursor.moveToFirst();
             int questionNr = 0;
             movieSets = new ArrayList<MovieSet>();
@@ -266,6 +266,7 @@ public class GameActivity extends Activity
                 movieSets.add(loadGameDataFromCursor(cursor, questionNr));
             } while (cursor.moveToNext());
             gameStatus.setQuestionCount(movieSets.size());
+            android.util.Log.d(TAG, "Number of movie sets: " + movieSets.size());
 
             refreshStatus();
 

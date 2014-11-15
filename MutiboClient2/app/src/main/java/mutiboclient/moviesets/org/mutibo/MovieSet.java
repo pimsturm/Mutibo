@@ -5,6 +5,11 @@ import java.util.ArrayList;
 public class MovieSet {
     private long id;
 
+    private long movie1Id;
+    private long movie2Id;
+    private long movie3Id;
+    private long movie4Id;
+
     private ArrayList<String> movieTitles;
 
     private String hint;
@@ -23,6 +28,39 @@ public class MovieSet {
         movieTitles = new ArrayList<String>();
         givenAnswer = -1;
         askedHint = false;
+        rating = 0;
+    }
+
+    public void setMovie1Id(long movieId){
+        this.movie1Id = movieId;
+    }
+
+    public long getMovie1Id() {
+        return this.movie1Id;
+    }
+
+    public void setMovie2Id(long movieId){
+        this.movie2Id = movieId;
+    }
+
+    public long getMovie2Id() {
+        return this.movie2Id;
+    }
+
+    public void setMovie3Id(long movieId){
+        this.movie3Id = movieId;
+    }
+
+    public long getMovie3Id() {
+        return this.movie3Id;
+    }
+
+    public void setMovie4Id(long movieId){
+        this.movie4Id = movieId;
+    }
+
+    public long getMovie4Id() {
+        return this.movie4Id;
     }
 
     public void addMovieTitle(String title) {

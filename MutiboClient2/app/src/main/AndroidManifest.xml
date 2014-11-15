@@ -30,6 +30,8 @@
             android:authorities="mutiboclient.moviesets.org.contentprovider.MutiboProvider"
             android:multiprocess="true"
             android:name="mutiboclient.moviesets.org.contentprovider.MutiboProvider"  />
+        <service
+            android:name="mutiboclient.moviesets.org.service.MutiboSyncService" />
     </application>
 
 </manifest>

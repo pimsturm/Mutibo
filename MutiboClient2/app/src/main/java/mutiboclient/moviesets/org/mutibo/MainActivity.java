@@ -13,7 +13,7 @@ import android.widget.Button;
 import mutiboclient.moviesets.org.contentprovider.MutiboProvider;
 import mutiboclient.moviesets.org.data.MovieSetTable;
 import mutiboclient.moviesets.org.data.MovieTable;
-
+import mutiboclient.moviesets.org.service.MutiboSyncService;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
@@ -22,7 +22,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        demoData();
+        //demoData();
+        startService(new Intent(getBaseContext(), MutiboSyncService.class));
         final Button btnStartGame = (Button) findViewById(R.id.btnStartGame);
 
         btnStartGame.setOnClickListener(new View.OnClickListener() {

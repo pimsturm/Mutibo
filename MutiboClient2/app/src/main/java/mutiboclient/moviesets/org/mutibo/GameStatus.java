@@ -1,6 +1,10 @@
 package mutiboclient.moviesets.org.mutibo;
 
+import android.util.Log;
+
 public class GameStatus {
+    private static final String TAG = "GameStatus";
+
     private String userName;
 
     private int availableHints = 3;
@@ -39,6 +43,7 @@ public class GameStatus {
         } else {
             setCurrentQuestion(currentQuestion + 1);
         }
+        Log.d(TAG, "Moved to question: " + getCurrentQuestion());
     }
 
     public int getCurrentQuestion() {

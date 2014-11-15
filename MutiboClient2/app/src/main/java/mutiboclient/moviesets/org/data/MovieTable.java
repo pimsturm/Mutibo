@@ -13,7 +13,7 @@ public class MovieTable {
     private static final String DATABASE_CREATE = "create table "
             + TABLE_MOVIE
             + "("
-            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_ID + " integer primary key, "
             + COLUMN_MOVIE_TITLE + " text not null"
             + ");";
 

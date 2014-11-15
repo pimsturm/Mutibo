@@ -21,7 +21,7 @@ public class MovieSetTable {
     private static final String DATABASE_CREATE = "create table "
             + TABLE_MOVIESET
             + "("
-            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_ID + " integer primary key, "
             + COLUMN_MOVIE1 + " integer not null, "
             + COLUMN_MOVIE2 + " integer not null, "
             + COLUMN_MOVIE3 + " integer not null, "

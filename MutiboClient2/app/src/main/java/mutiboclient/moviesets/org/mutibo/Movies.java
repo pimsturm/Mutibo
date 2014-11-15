@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import mutiboclient.moviesets.org.service.MovieSvc;
+import mutiboclient.moviesets.org.service.MovieSvcApi;
+
 
 public class Movies extends Activity {
 

@@ -1,9 +1,7 @@
-package mutiboclient.moviesets.org.mutibo;
+package mutiboclient.moviesets.org.service;
 
 import retrofit.RestAdapter;
 import retrofit.RestAdapter.LogLevel;
-import mutiboclient.moviesets.org.mutibo.MovieSvcApi;
-import retrofit.converter.GsonConverter;
 
 public class MovieSvc {
     private static MovieSvcApi movieSvc_;

@@ -160,6 +160,7 @@ public class MutiboProvider extends ContentProvider {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = mDB.getWritableDatabase();
         int rowsUpdated;
+        String id;
         switch (uriType) {
             case MOVIESETS:
                 rowsUpdated = sqlDB.update(MovieSetTable.TABLE_MOVIESET,
@@ -174,7 +175,7 @@ public class MutiboProvider extends ContentProvider {
                         selectionArgs);
                 break;
             case MOVIESETS_ID:
-                String id = uri.getLastPathSegment();
+                id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = sqlDB.update(MovieSetTable.TABLE_MOVIESET,
                             values,
@@ -189,6 +190,14 @@ public class MutiboProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
+            case MOVIES_ID:
+                id = uri.getLastPathSegment();
+                rowsUpdated = sqlDB.update(MovieTable.TABLE_MOVIE,
+                        values,
+                        MovieTable.COLUMN_ID + "=" + id,
+                        null);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
