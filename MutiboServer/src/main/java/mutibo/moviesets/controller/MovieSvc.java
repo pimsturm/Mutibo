@@ -1,6 +1,7 @@
 package mutibo.moviesets.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ public class MovieSvc {
 
 	public static final String MOVIE_SVC_PATH = "/movie";
 	public static final String MOVIE_DATA_PATH = MOVIE_SVC_PATH + "/{id}";
+	public static final String MOVIE_DATA_USED_PATH = MOVIE_SVC_PATH + "/used";
 
 	@Autowired
 	private MovieRepository movies;
@@ -38,6 +40,13 @@ public class MovieSvc {
 	@RequestMapping(value=MOVIE_SVC_PATH, method=RequestMethod.POST)
 	public @ResponseBody Movie addMovie(@RequestBody Movie movie) {
 		return movies.save(movie);
+	}
+
+	// POST /movie/used
+	// Return a list of movies with specified id's
+	@RequestMapping(value=MOVIE_DATA_USED_PATH, method=RequestMethod.POST)
+	public @ResponseBody Collection<Movie> getUsedMovie(@RequestBody ArrayList<Long> movieIds) {
+		return Lists.newArrayList(movies.findAll(movieIds));
 	}
 
 	// GET /movie

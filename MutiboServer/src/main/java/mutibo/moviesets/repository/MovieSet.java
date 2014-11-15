@@ -108,7 +108,15 @@ public class MovieSet {
 		return this.hint;
 	}
 	
-//	public void setMovies(Set<Movie> movies) {
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getId() {
+		return this.id;
+	}
+
+	//	public void setMovies(Set<Movie> movies) {
 //		this.movies = movies;
 //	}
 //	

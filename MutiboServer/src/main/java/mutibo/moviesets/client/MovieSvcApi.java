@@ -1,20 +1,20 @@
 package mutibo.moviesets.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import mutibo.moviesets.repository.Movie;
-
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Query;
 
 public interface MovieSvcApi {
+	public static final String MOVIE_SVC_PATH = "/movie";
+	public static final String MOVIE_DATA_PATH = MOVIE_SVC_PATH + "/{id}";
+	public static final String MOVIE_DATA_USED_PATH = MOVIE_SVC_PATH + "/used";
 
 	public static final String TITLE_PARAMETER = "title";
-
-	// The path where we expect the MovieSvc to live
-	public static final String MOVIE_SVC_PATH = "/movie";
 
 	// The path to search movies by title
 	public static final String MOVIE_TITLE_SEARCH_PATH = MOVIE_SVC_PATH
@@ -22,6 +22,9 @@ public interface MovieSvcApi {
 
 	@GET(MOVIE_SVC_PATH)
 	public Collection<Movie> getMovieList();
+
+	@POST(MOVIE_DATA_USED_PATH)
+	public Collection<Movie> getUsedMovie(@Body ArrayList<Long> usedIds);
 
 	@POST(MOVIE_SVC_PATH)
 	public Movie addMovie(@Body Movie movie);
