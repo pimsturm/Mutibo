@@ -4,13 +4,18 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mutiboclient.moviesets.org.data.MovieTable;
 import mutiboclient.moviesets.org.data.MutiboDatabase;
 import mutiboclient.moviesets.org.data.MovieSetTable;
+import mutiboclient.moviesets.org.util.RandomInteger;
 
 public class MutiboProvider extends ContentProvider {
 
@@ -78,9 +83,14 @@ public class MutiboProvider extends ContentProvider {
                 android.util.Log.d(TAG, "Moviesets_id: " + cursor.getCount());
                 break;
             case MOVIESETS:
-                // no filter
+                String[] movieSetIds = randomMovieSet();
+                queryString = queryString +
+                        " where " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_ID +
+                        " in (" + makePlaceholders(movieSetIds.length) + ")";
+                android.util.Log.d(TAG, "movieSetIds.length: " + movieSetIds.length);
+                android.util.Log.d(TAG, queryString);
                 cursor = mDB.getReadableDatabase().
-                        rawQuery(queryString, null);
+                        rawQuery(queryString, movieSetIds);
                 android.util.Log.d(TAG, "Moviesets: " + cursor.getCount());
 
                 break;
@@ -90,6 +100,40 @@ public class MutiboProvider extends ContentProvider {
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
+    }
+
+    // Select (at most) 10 random movie sets
+    private String[] randomMovieSet() {
+        // Create a cursor with the id's of all movie sets.
+        Cursor idList = mDB.getReadableDatabase().
+                rawQuery("select " + MovieSetTable.COLUMN_ID +
+                " from " + MovieSetTable.TABLE_MOVIESET, null);
+
+        List<String> result = new ArrayList<String>();
+
+        if (idList.getCount() > 0) {
+            // Generate 10 random int's in the range 0 ... idList.getCount() - 1
+            int[] randomIds = RandomInteger.generate(Math.min(10, idList.getCount()), idList.getCount());
+            for (int idx = 0; idx < randomIds.length; idx++) {
+                result.add(Integer.toString(randomIds[idx]));
+            }
+
+        }
+        return result.toArray(new String[result.size()]);
+    }
+
+    private String makePlaceholders(int len) {
+        if (len < 1) {
+            // It will lead to an invalid query anyway ..
+            throw new RuntimeException("No placeholders");
+        } else {
+            StringBuilder sb = new StringBuilder(len * 2 - 1);
+            sb.append("?");
+            for (int i = 1; i < len; i++) {
+                sb.append(",?");
+            }
+            return sb.toString();
+        }
     }
 
     @Override
