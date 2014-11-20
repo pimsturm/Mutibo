@@ -15,6 +15,7 @@ import java.util.List;
 import mutiboclient.moviesets.org.data.MovieTable;
 import mutiboclient.moviesets.org.data.MutiboDatabase;
 import mutiboclient.moviesets.org.data.MovieSetTable;
+import mutiboclient.moviesets.org.data.RatingTable;
 import mutiboclient.moviesets.org.util.RandomInteger;
 
 public class MutiboProvider extends ContentProvider {
@@ -25,13 +26,17 @@ public class MutiboProvider extends ContentProvider {
     public static final int MOVIESETS_ID = 110;
     public static final int MOVIES = 200;
     public static final int MOVIES_ID = 210;
+    public static final int RATING = 300;
 
     private static final String MOVIESETS_BASE_PATH = "moviesets";
     private static final String MOVIES_BASE_PATH = "movies";
+    private static final String RATING_BASE_PATH = "rating";
     public static final Uri CONTENT_MOVIESET_URI = Uri.parse("content://" + AUTHORITY
             + "/" + MOVIESETS_BASE_PATH);
     public static final Uri CONTENT_MOVIE_URI = Uri.parse("content://" + AUTHORITY
             + "/" + MOVIES_BASE_PATH);
+    public static final Uri CONTENT_RATING_URI = Uri.parse("content://" + AUTHORITY
+            + "/" + RATING_BASE_PATH);
 
     private static final String TAG = "MutiboProvider";
 
@@ -43,6 +48,7 @@ public class MutiboProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, MOVIESETS_BASE_PATH + "/#", MOVIESETS_ID);
         sURIMatcher.addURI(AUTHORITY, MOVIES_BASE_PATH, MOVIES);
         sURIMatcher.addURI(AUTHORITY, MOVIES_BASE_PATH + "/#", MOVIES_ID);
+        sURIMatcher.addURI(AUTHORITY, RATING_BASE_PATH, RATING);
     }
 
     @Override
@@ -93,6 +99,16 @@ public class MutiboProvider extends ContentProvider {
                         rawQuery(queryString, movieSetIds);
                 android.util.Log.d(TAG, "Moviesets: " + cursor.getCount());
 
+                break;
+            case RATING:
+                cursor = mDB.getReadableDatabase().
+                        rawQuery("select " +
+                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_ID + "," +
+                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_USER_ID + "," +
+                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_MOVIESET_ID + "," +
+                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_RATING +
+                        " from " + RatingTable.TABLE_RATING, null);
+                android.util.Log.d(TAG, "Ratings: " + cursor.getCount());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI");
@@ -156,6 +172,10 @@ public class MutiboProvider extends ContentProvider {
                 id = sqlDB.insert(MovieTable.TABLE_MOVIE, null, values);
                 resultUri = Uri.parse(MOVIES_BASE_PATH + "/" + id);
                 break;
+            case RATING:
+                id = sqlDB.insert(RatingTable.TABLE_RATING, null, values);
+                resultUri = Uri.parse(RATING_BASE_PATH + "/" + id);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
@@ -214,6 +234,12 @@ public class MutiboProvider extends ContentProvider {
                 break;
             case MOVIES:
                 rowsUpdated = sqlDB.update(MovieTable.TABLE_MOVIE,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            case RATING:
+                rowsUpdated = sqlDB.update(RatingTable.TABLE_RATING,
                         values,
                         selection,
                         selectionArgs);

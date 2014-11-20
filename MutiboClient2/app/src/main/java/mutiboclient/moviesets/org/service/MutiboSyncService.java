@@ -3,6 +3,7 @@ package mutiboclient.moviesets.org.service;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -15,8 +16,10 @@ import java.util.Collection;
 import mutiboclient.moviesets.org.contentprovider.MutiboProvider;
 import mutiboclient.moviesets.org.data.MovieSetTable;
 import mutiboclient.moviesets.org.data.MovieTable;
+import mutiboclient.moviesets.org.data.RatingTable;
 import mutiboclient.moviesets.org.mutibo.Movie;
 import mutiboclient.moviesets.org.mutibo.MovieSet;
+import mutiboclient.moviesets.org.mutibo.Rating;
 
 public class MutiboSyncService extends Service {
     private static final String TAG = "MutiboSyncService";
@@ -37,6 +40,7 @@ public class MutiboSyncService extends Service {
         private static final String TAG = "MutiboSyncService$MutiboSyncTask";
         MovieSvcApi movieSvc = MovieSvc.init("http://10.0.2.2:8080", "user", "pass");
         MovieSetSvcApi movieSetSvc = MovieSetSvc.init("http://10.0.2.2:8080", "user", "pass");
+        RatingSvcApi ratingSvc = RatingSvc.init("http://10.0.2.2:8080", "user", "pass");
 
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -89,6 +93,24 @@ public class MutiboSyncService extends Service {
                         Log.d(TAG, "Movies inserted: " + result);
                     }
                 }
+
+                Log.d(TAG, "Rating");
+                Cursor cursor = getContentResolver().query(MutiboProvider.CONTENT_RATING_URI, null, null, null, null);
+                if (cursor != null && cursor.getCount() > 0) {
+                    android.util.Log.d(TAG, "cursor count: " + cursor.getCount());
+                    cursor.moveToFirst();
+                    ArrayList<Rating> ratings = new ArrayList<Rating>();
+                    do {
+                        Rating rating = new Rating();
+                        rating.setId(cursor.getLong(cursor.getColumnIndex(RatingTable.COLUMN_ID)));
+                        rating.setUserId(cursor.getString(cursor.getColumnIndex(RatingTable.COLUMN_USER_ID)));
+                        rating.setMovieSetId(cursor.getLong(cursor.getColumnIndex(RatingTable.COLUMN_MOVIESET_ID)));
+                        rating.setRating(cursor.getInt(cursor.getColumnIndex(RatingTable.COLUMN_RATING)));
+                        ratings.add(rating);
+                    } while (cursor.moveToNext());
+                    ratingSvc.addRating(ratings);
+                }
+
 
                 success = true;
             } catch (Exception e){

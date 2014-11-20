@@ -16,12 +16,13 @@ public class MutiboDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         MovieSetTable.onCreate(db);
         MovieTable.onCreate(db);
-
+        RatingTable.onCreate(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         MovieSetTable.onUpgrade(db, oldVersion, newVersion);
         MovieTable.onUpgrade(db, oldVersion, newVersion);
+        RatingTable.onUpgrade(db, oldVersion, newVersion);
     }
 }

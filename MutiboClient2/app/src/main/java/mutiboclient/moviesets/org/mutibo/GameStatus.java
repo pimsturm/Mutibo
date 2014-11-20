@@ -20,6 +20,8 @@ public class GameStatus {
     // Number of questions in a game
     private int QuestionCount = 10;
 
+    private Boolean gameEnded = false;
+
     GameStatus() {}
 
     public void setAvailableHints(int availableHints) {
@@ -76,9 +78,16 @@ public class GameStatus {
 
     public void setWrongAnswers(int wrongAnswers) {
         this.wrongAnswers = wrongAnswers;
+        if (this.wrongAnswers > 2) {
+            this.setGameEnded(true);
+        }
     }
 
     public int getWrongAnswers() {
         return wrongAnswers;
     }
+
+    public Boolean getGameEnded() {return this.gameEnded;}
+
+    public void setGameEnded(Boolean gameEnded) {this.gameEnded = gameEnded;}
 }

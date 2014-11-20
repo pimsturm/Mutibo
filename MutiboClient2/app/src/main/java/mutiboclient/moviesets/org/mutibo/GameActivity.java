@@ -2,10 +2,13 @@ package mutiboclient.moviesets.org.mutibo;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,11 +19,14 @@ import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import mutiboclient.moviesets.org.contentprovider.MutiboProvider;
 import mutiboclient.moviesets.org.data.MovieSetTable;
+import mutiboclient.moviesets.org.data.RatingTable;
+import mutiboclient.moviesets.org.service.MutiboSyncService;
 
 enum GameInfoStatus {NONE, HINT, EXPLANATION}
 
@@ -84,6 +90,18 @@ public class GameActivity extends Activity
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        processRating();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        startService(new Intent(getBaseContext(), MutiboSyncService.class));
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,7 +127,7 @@ public class GameActivity extends Activity
         txtUserName.setText(getString(R.string.game_user_name) + gameStatus.getUserName());
 
         final TextView txtScore = (TextView) findViewById(R.id.txtScore);
-        txtScore.setText(getString(R.string.game_score) + gameStatus.getScore());
+        txtScore.setText(getString(R.string.game_score) + gameStatus.getScore() + "/" + movieSets.size());
 
         final TextView txtHints = (TextView) findViewById(R.id.txtHints);
         txtHints.setText(getString(R.string.game_hints) + gameStatus.getAvailableHints());
@@ -137,7 +155,7 @@ public class GameActivity extends Activity
 
         final RatingBar rbGameRating = (RatingBar) findViewById(R.id.rbGameRating);
         final Button btnSubmit = (Button) findViewById(R.id.btnGameSubmit);
-        int givenAnswer = movieSet.getGivenAnswer();
+        int givenAnswer = movieSet.getGivenAnswer() - 1;
         if (givenAnswer > -1) {
             final RadioButton selectedButton = (RadioButton) findViewById(radioButtons[givenAnswer]);
             selectedButton.setChecked(true);
@@ -152,6 +170,10 @@ public class GameActivity extends Activity
         } else {
             btnSubmit.setEnabled(true);
             rbGameRating.setEnabled(false);
+        }
+
+        if (gameStatus.getGameEnded()) {
+            btnSubmit.setEnabled(false);
         }
 
         rbGameRating.setRating(movieSet.getRating());
@@ -206,7 +228,7 @@ public class GameActivity extends Activity
 
         if (selectedOption > -1) {
             View radioButton = groupGameOptions.findViewById(selectedOption);
-            return groupGameOptions.indexOfChild(radioButton);
+            return groupGameOptions.indexOfChild(radioButton) + 1;
         }
         else {
             return -1;
@@ -224,8 +246,35 @@ public class GameActivity extends Activity
             gameStatus.setWrongAnswers(gameStatus.getWrongAnswers() + 1);
         }
 
+        if (gameStatus.getGameEnded()) {
+            Toast.makeText(this,"You lost. Game over.", Toast.LENGTH_SHORT).show();
+        }
+
         gameInfoStatus = GameInfoStatus.EXPLANATION;
 
+    }
+
+    private void processRating() {
+        for (MovieSet movieSet: movieSets) {
+            int rowsUpdated;
+            if (movieSet.getRating() > 0) {
+                //User entered a rating, store it.
+                Log.d(TAG, "Rating MovieSet:" + movieSet.getId());
+                ContentValues ratingValues = new ContentValues();
+                ratingValues.put(RatingTable.COLUMN_RATING, movieSet.getRating());
+                rowsUpdated = getContentResolver().update(MutiboProvider.CONTENT_RATING_URI, ratingValues,
+                        RatingTable.COLUMN_USER_ID + " = ? " + " AND " +
+                        RatingTable.COLUMN_MOVIESET_ID  + " = ? ",
+                        new String[] {gameStatus.getUserName(), Long.toString(movieSet.getId())});
+                Log.d(TAG, "Rating updated: " + rowsUpdated);
+                if (rowsUpdated == 0) {
+                    ratingValues.put(RatingTable.COLUMN_USER_ID, gameStatus.getUserName());
+                    ratingValues.put(RatingTable.COLUMN_MOVIESET_ID, movieSet.getId());
+                    Uri ratingUri = getContentResolver().insert(MutiboProvider.CONTENT_RATING_URI, ratingValues);
+                    Log.d(TAG, ratingUri.toString());
+                }
+            }
+        }
     }
 
     private MovieSet getCurrentMovieSet() {
