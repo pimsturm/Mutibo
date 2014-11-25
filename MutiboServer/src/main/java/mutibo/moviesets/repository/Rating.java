@@ -20,7 +20,7 @@ public class Rating {
 	@Column(name="movieset_id")
 	private Long movieSetId;
 
-	private int rating;
+	private double rating;
 	
 	public Rating() {}
 	
@@ -52,7 +52,7 @@ public class Rating {
 		this.rating = rating;
 	}
 	
-	public int getRating() {
+	public double getRating() {
 		return this.rating;
 	}
 	
