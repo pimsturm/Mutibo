@@ -12,6 +12,7 @@ import mutiboclient.moviesets.org.mutibo.Rating;
 public interface RatingSvcApi {
     public static final String RATING_SVC_PATH = "/rating";
     public static final String RATING_DATA_PATH = RATING_SVC_PATH + "/{user_id}";
+    public static final String RATING_DATA_AVG_PATH = RATING_SVC_PATH + "/avg";
 
     @POST(RATING_SVC_PATH)
     public Boolean addRating(@Body ArrayList<Rating> rating);
@@ -20,4 +21,8 @@ public interface RatingSvcApi {
     // Store in a JPA repository
     @POST(RATING_DATA_PATH)
     public ArrayList<Rating> findRatingByUser(@Query("usr_id") String userId);
+
+    // GET /rating/avg
+    @GET(RATING_DATA_AVG_PATH)
+    public ArrayList<Rating> getAverageRating();
 }

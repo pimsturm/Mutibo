@@ -14,6 +14,7 @@ public class MovieSetTable {
     public static final String COLUMN_HINT = "hint";
     public static final String COLUMN_EXPLANATION = "explanation";
     public static final String COLUMN_RATING = "rating";
+    public static final String COLUMN_AVG_RATING = "avg_rating";
     public static final String COLUMN_CORRECT_ANSWER = "correct_answer";
     public static final String COLUMN_GIVEN_ANSWER = "given_answer";
 
@@ -29,6 +30,7 @@ public class MovieSetTable {
             + COLUMN_HINT + " text not null, "
             + COLUMN_EXPLANATION + " text not null, "
             + COLUMN_RATING + " integer not null, "
+            + COLUMN_AVG_RATING + " integer not null, "
             + COLUMN_CORRECT_ANSWER + " integer not null, "
             + COLUMN_GIVEN_ANSWER + " integer not null"
             + ");";

@@ -1,6 +1,10 @@
 package mutiboclient.moviesets.org.mutibo;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,24 +22,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import mutiboclient.moviesets.org.contentprovider.MutiboProvider;
+import mutiboclient.moviesets.org.data.MovieSetTable;
 import mutiboclient.moviesets.org.service.MovieSvc;
 import mutiboclient.moviesets.org.service.MovieSvcApi;
 
 
-public class Movies extends Activity {
+public class Movies extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    ArrayList<String> movieList = new ArrayList<String>();
+    private static final String TAG = "List ratings";
+    SimpleCursorAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_listview);
 
-
-        movieList.add("Movie 1");
-        movieList.add("Movie 2");
-
-        ListView myList=(ListView)findViewById(android.R.id.list);
+        ListView myList = (ListView) findViewById(android.R.id.list);
         myList.setTextFilterEnabled(true);
 
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -47,7 +51,20 @@ public class Movies extends Activity {
             }
 
         });
-        new HttpGetTask().execute();
+
+        mAdapter = new SimpleCursorAdapter(this, R.layout.movie_listview_custom_row, null,
+                new String[]{MovieSetTable.COLUMN_ID,
+                        "movie1",
+                        MovieSetTable.COLUMN_AVG_RATING},
+                new int[] {R.id.movie_listview_custom_row_KEY_ID_textView,
+                        R.id.movie_listview_custom_row_title_textView,
+                        R.id.movie_listview_custom_row_creation_time_textView}, 0);
+
+        myList.setAdapter(mAdapter);
+
+        getLoaderManager().initLoader(0, null, this);
+
+        //new HttpGetTask().execute();
     }
 
     @Override
@@ -66,6 +83,27 @@ public class Movies extends Activity {
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        CursorLoader loader = new CursorLoader(
+                this,
+                MutiboProvider.CONTENT_RATING_MOVIESETS_URI,
+                null,   //new String[]{MovieSetTable.COLUMN_ID, MovieSetTable.COLUMN_AVG_RATING}
+                        null,
+                        null,
+                        null);
+        return loader;
+    }
+
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        Log.d(TAG, "Number of ratings:" + cursor.getCount());
+        mAdapter.swapCursor(cursor);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
+    }
+
     public void test(View view) {
     }
 
@@ -82,16 +120,18 @@ public class Movies extends Activity {
                     titles.add(movie.getMovieTitle());
                 }
                 return titles;
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e(TAG, "Error invoking callable in AsyncTask HttpGetTask", e);
             }
             return null;
         }
 
+        ListView myList = (ListView) findViewById(android.R.id.list);
+
         @Override
         protected void onPostExecute(List<String> result) {
-            ListView myList=(ListView)findViewById(android.R.id.list);
-            myList.setAdapter(new ArrayAdapter<String>(Movies.this,  R.layout.movie_listview_custom_row,
+
+            myList.setAdapter(new ArrayAdapter<String>(Movies.this, R.layout.movie_listview_custom_row,
                     R.id.movie_listview_custom_row_title_textView, result));
 
         }

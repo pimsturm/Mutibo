@@ -64,6 +64,7 @@ public class MutiboSyncService extends Service {
                     movieSetValues.put(MovieSetTable.COLUMN_EXPLANATION, movieSet.getExplanation());
                     movieSetValues.put(MovieSetTable.COLUMN_HINT, movieSet.getHint());
                     movieSetValues.put(MovieSetTable.COLUMN_RATING, movieSet.getRating());
+                    movieSetValues.put(MovieSetTable.COLUMN_AVG_RATING, 0);
                     movieSetValues.put(MovieSetTable.COLUMN_GIVEN_ANSWER, movieSet.getGivenAnswer());
 
                     movieUsedId.add(movieSet.getMovie1Id());
@@ -92,6 +93,15 @@ public class MutiboSyncService extends Service {
                         Uri result = getContentResolver().insert(MutiboProvider.CONTENT_MOVIE_URI, movieValues);
                         Log.d(TAG, "Movies inserted: " + result);
                     }
+                }
+
+                Log.d(TAG, "Average rating");
+                ArrayList<Rating> averageRatings = ratingSvc.getAverageRating();
+                for (Rating averageRating: averageRatings) {
+                    ContentValues ratingValues = new ContentValues();
+                    ratingValues.put(MovieSetTable.COLUMN_AVG_RATING, averageRating.getRating());
+                    rowsUpdated = getContentResolver().update(Uri.parse(MutiboProvider.CONTENT_MOVIESET_URI + "/" + averageRating.getMovieSetId()), ratingValues, null, null);
+                    Log.d(TAG, "Movie set rating updated: " + rowsUpdated);
                 }
 
                 Log.d(TAG, "Rating");

@@ -8,6 +8,7 @@
     <string name="movie_list_button_label_add">Add a movie</string>
     <string name="movie_list_filter_hint">Title Filter...</string>
     <string name="btn_start_game">Start game</string>
+    <string name="btn_show_movie_set">Show movie sets</string>
     <string name="title_activity_main">Mutibo</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="game_quiz_question">Which one of these is not like the others?</string>

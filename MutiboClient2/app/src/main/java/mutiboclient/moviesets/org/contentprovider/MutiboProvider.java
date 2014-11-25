@@ -8,8 +8,11 @@ import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import mutiboclient.moviesets.org.data.MovieTable;
@@ -27,16 +30,20 @@ public class MutiboProvider extends ContentProvider {
     public static final int MOVIES = 200;
     public static final int MOVIES_ID = 210;
     public static final int RATING = 300;
+    public static final int RATING_MOVIESETS = 400;
 
     private static final String MOVIESETS_BASE_PATH = "moviesets";
     private static final String MOVIES_BASE_PATH = "movies";
     private static final String RATING_BASE_PATH = "rating";
+    private static final String RATING_MOVIESETS_BASE_PATH = "ratingmoviesets";
     public static final Uri CONTENT_MOVIESET_URI = Uri.parse("content://" + AUTHORITY
             + "/" + MOVIESETS_BASE_PATH);
     public static final Uri CONTENT_MOVIE_URI = Uri.parse("content://" + AUTHORITY
             + "/" + MOVIES_BASE_PATH);
     public static final Uri CONTENT_RATING_URI = Uri.parse("content://" + AUTHORITY
             + "/" + RATING_BASE_PATH);
+    public static final Uri CONTENT_RATING_MOVIESETS_URI = Uri.parse("content://" + AUTHORITY
+            + "/" + RATING_MOVIESETS_BASE_PATH);
 
     private static final String TAG = "MutiboProvider";
 
@@ -49,6 +56,7 @@ public class MutiboProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, MOVIES_BASE_PATH, MOVIES);
         sURIMatcher.addURI(AUTHORITY, MOVIES_BASE_PATH + "/#", MOVIES_ID);
         sURIMatcher.addURI(AUTHORITY, RATING_BASE_PATH, RATING);
+        sURIMatcher.addURI(AUTHORITY, RATING_MOVIESETS_BASE_PATH, RATING_MOVIESETS);
     }
 
     @Override
@@ -61,22 +69,16 @@ public class MutiboProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         android.util.Log.d(TAG, "query");
+
+        String fieldList = getFieldList(projection);
         String queryString =
                 "select " +
-                        "M1." + MovieTable.COLUMN_MOVIE_TITLE + " as movie1, " +
-                        "M2." + MovieTable.COLUMN_MOVIE_TITLE + " as movie2, " +
-                        "M3." + MovieTable.COLUMN_MOVIE_TITLE + " as movie3, " +
-                        "M4." + MovieTable.COLUMN_MOVIE_TITLE + " as movie4, " +
-                        MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_EXPLANATION + "," +
-                        MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_HINT + "," +
-                        MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_CORRECT_ANSWER + "," +
-                        MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_GIVEN_ANSWER + "," +
-                        MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_RATING  +
-                " from " + MovieSetTable.TABLE_MOVIESET +
-                " join " + MovieTable.TABLE_MOVIE + " M1 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE1 + " = M1." + MovieTable.COLUMN_ID +
-                " join " + MovieTable.TABLE_MOVIE + " M2 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE2 + " = M2." + MovieTable.COLUMN_ID +
-                " join " + MovieTable.TABLE_MOVIE + " M3 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE3 + " = M3." + MovieTable.COLUMN_ID +
-                " join " + MovieTable.TABLE_MOVIE + " M4 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE4 + " = M4." + MovieTable.COLUMN_ID;
+                        fieldList +
+                        " from " + MovieSetTable.TABLE_MOVIESET +
+                        " join " + MovieTable.TABLE_MOVIE + " M1 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE1 + " = M1." + MovieTable.COLUMN_ID +
+                        " join " + MovieTable.TABLE_MOVIE + " M2 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE2 + " = M2." + MovieTable.COLUMN_ID +
+                        " join " + MovieTable.TABLE_MOVIE + " M3 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE3 + " = M3." + MovieTable.COLUMN_ID +
+                        " join " + MovieTable.TABLE_MOVIE + " M4 on " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_MOVIE4 + " = M4." + MovieTable.COLUMN_ID;
 
         Cursor cursor;
         int uriType = sURIMatcher.match(uri);
@@ -85,7 +87,7 @@ public class MutiboProvider extends ContentProvider {
                 queryString = queryString +
                         " where " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_ID + " = ?";
                 cursor = mDB.getReadableDatabase().
-                        rawQuery(queryString, new String[] { uri.getLastPathSegment() });
+                        rawQuery(queryString, new String[]{uri.getLastPathSegment()});
                 android.util.Log.d(TAG, "Moviesets_id: " + cursor.getCount());
                 break;
             case MOVIESETS:
@@ -100,14 +102,24 @@ public class MutiboProvider extends ContentProvider {
                 android.util.Log.d(TAG, "Moviesets: " + cursor.getCount());
 
                 break;
+            case RATING_MOVIESETS:
+                android.util.Log.d(TAG, queryString);
+                queryString = queryString +
+                        " where " + MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_AVG_RATING +
+                        " > 0 order by " + MovieSetTable.COLUMN_AVG_RATING;
+                android.util.Log.d(TAG, queryString);
+                cursor = mDB.getReadableDatabase().
+                        rawQuery(queryString, null);
+                android.util.Log.d(TAG, "Rating Moviesets: " + cursor.getCount());
+                break;
             case RATING:
                 cursor = mDB.getReadableDatabase().
                         rawQuery("select " +
-                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_ID + "," +
-                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_USER_ID + "," +
-                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_MOVIESET_ID + "," +
-                        RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_RATING +
-                        " from " + RatingTable.TABLE_RATING, null);
+                                RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_ID + "," +
+                                RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_USER_ID + "," +
+                                RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_MOVIESET_ID + "," +
+                                RatingTable.TABLE_RATING + "." + RatingTable.COLUMN_RATING +
+                                " from " + RatingTable.TABLE_RATING, null);
                 android.util.Log.d(TAG, "Ratings: " + cursor.getCount());
                 break;
             default:
@@ -118,12 +130,44 @@ public class MutiboProvider extends ContentProvider {
         return cursor;
     }
 
+    // Build the field list for the query
+    private String getFieldList(String[] projection) {
+        String fieldList = "";
+
+        if (projection != null) {
+            checkColumns(projection);
+            for (String field : projection) {
+                fieldList = fieldList + MovieSetTable.TABLE_MOVIESET + "." + field + ", ";
+            }
+            if (fieldList.length() > 0) {
+                // Remove last comma
+                fieldList = fieldList.substring(0, fieldList.length() - 2);
+                Log.d(TAG, "Projection to fieldList:" + fieldList);
+            }
+        } else {
+            fieldList =
+                    MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_ID + "," +
+                    "M1." + MovieTable.COLUMN_MOVIE_TITLE + " as movie1, " +
+                    "M2." + MovieTable.COLUMN_MOVIE_TITLE + " as movie2, " +
+                    "M3." + MovieTable.COLUMN_MOVIE_TITLE + " as movie3, " +
+                    "M4." + MovieTable.COLUMN_MOVIE_TITLE + " as movie4, " +
+                    MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_EXPLANATION + "," +
+                    MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_HINT + "," +
+                    MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_CORRECT_ANSWER + "," +
+                    MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_GIVEN_ANSWER + "," +
+                    MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_RATING + "," +
+                    MovieSetTable.TABLE_MOVIESET + "." + MovieSetTable.COLUMN_AVG_RATING;
+        }
+
+        return fieldList;
+    }
+
     // Select (at most) 10 random movie sets
     private String[] randomMovieSet() {
         // Create a cursor with the id's of all movie sets.
         Cursor idList = mDB.getReadableDatabase().
                 rawQuery("select " + MovieSetTable.COLUMN_ID +
-                " from " + MovieSetTable.TABLE_MOVIESET, null);
+                        " from " + MovieSetTable.TABLE_MOVIESET, null);
 
         List<String> result = new ArrayList<String>();
 
@@ -149,6 +193,20 @@ public class MutiboProvider extends ContentProvider {
                 sb.append(",?");
             }
             return sb.toString();
+        }
+    }
+
+    private void checkColumns(String[] projection) {
+        String[] available = {MovieSetTable.COLUMN_ID,
+                MovieSetTable.COLUMN_RATING, MovieSetTable.COLUMN_AVG_RATING,
+                MovieSetTable.COLUMN_CORRECT_ANSWER};
+        if (projection != null) {
+            HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
+            HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
+            // check if all columns which are requested are available
+            if (!availableColumns.containsAll(requestedColumns)) {
+                throw new IllegalArgumentException("Unknown columns in projection");
+            }
         }
     }
 

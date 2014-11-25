@@ -33,6 +33,17 @@ public class MainActivity extends Activity {
                 startActivity(startGame);
             }
         });
+
+        final Button btnShowMovieSets = (Button) findViewById(R.id.btnShowMovieSet);
+        btnShowMovieSets.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent showMovieSets = new Intent(MainActivity.this, Movies.class);
+                startActivity(showMovieSets);
+
+            }
+
+        });
     }
 
 

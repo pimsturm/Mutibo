@@ -23,13 +23,23 @@
         android:layout_below="@+id/movie_listview_custom_row_KEY_ID_textView"
         />
     <TextView
-        android:id="@+id/movie_listview_custom_row_creation_time_textView"
+        android:id="@+id/movie_listview_custom_row_rating_label_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:text="creation_time"
+        android:text="Rating: "
         android:textSize="16sp"
         android:layout_below="@+id/movie_listview_custom_row_title_textView"
+        />
+    <TextView
+        android:id="@+id/movie_listview_custom_row_creation_time_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:text="rating"
+        android:textSize="16sp"
+        android:layout_below="@+id/movie_listview_custom_row_title_textView"
+        android:layout_toRightOf="@+id/movie_listview_custom_row_rating_label_textView"
         />
 
 </RelativeLayout>
