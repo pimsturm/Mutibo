@@ -47,8 +47,8 @@ public class RatingSvc {
 		return true;
 	}
 
-	// POST /rating/{user_id}
-	@RequestMapping(value=RATING_DATA_PATH, method=RequestMethod.POST)
+	// GET /rating/{user_id}
+	@RequestMapping(value=RATING_DATA_PATH, method=RequestMethod.GET)
 	public @ResponseBody ArrayList<Rating> findRatingByUser(@PathVariable("usr_id") String userId) {
 		return ratings.findByUserId(userId);
 	}

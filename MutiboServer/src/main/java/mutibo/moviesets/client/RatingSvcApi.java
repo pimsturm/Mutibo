@@ -19,9 +19,8 @@ public interface RatingSvcApi {
 	@POST(RATING_SVC_PATH)
 	public Boolean addRating(@Body ArrayList<Rating> rating);
 
-	// POST /rating/{user_id}
-	// Store in a JPA repository
-	@POST(RATING_DATA_PATH)
+	// GET /rating/{user_id}
+	@GET(RATING_DATA_PATH)
 	public ArrayList<Rating> findRatingByUser(@Query("usr_id") String userId);
 	
 	// GET /rating/avg

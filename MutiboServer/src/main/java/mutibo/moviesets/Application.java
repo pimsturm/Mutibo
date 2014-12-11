@@ -2,11 +2,14 @@ package mutibo.moviesets;
 
 import mutibo.moviesets.repository.MovieRepository;
 import mutibo.moviesets.repository.MovieSetRepository;
+import mutibo.moviesets.repository.RatingRepository;
 
+import mutibo.moviesets.oauth.OAuth2SecurityConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -15,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableAutoConfiguration
 // Tell Spring to automatically create a JPA implementation of our
 // MutiboRepository
-@EnableJpaRepositories(basePackageClasses = {MovieRepository.class, MovieSetRepository.class})
+@EnableJpaRepositories(basePackageClasses = {MovieRepository.class, MovieSetRepository.class, RatingRepository.class})
 // Tell Spring that this object represents a Configuration for the
 // application
 @Configuration
@@ -27,6 +30,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 // Any class in this package that is annotated with @Controller is going to be
 // automatically discovered and connected to the DispatcherServlet.
 @ComponentScan
+//We use the @Import annotation to include our OAuth2SecurityConfiguration
+//as part of this configuration so that we can have security and oauth
+//setup by Spring
+@Import(OAuth2SecurityConfiguration.class)
 public class Application {
 	
 	// Tell Spring to launch our app!
