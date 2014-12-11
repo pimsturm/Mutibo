@@ -3,9 +3,11 @@ package mutiboclient.moviesets.org.mutibo;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -99,6 +101,7 @@ public class GameActivity extends Activity
     @Override
     protected void onStop() {
         super.onStop();
+        // Save ratings and scores
         startService(new Intent(getBaseContext(), MutiboSyncService.class));
     }
 
@@ -286,11 +289,13 @@ public class GameActivity extends Activity
         getLoaderManager().initLoader(0, null, this);
         gameInfoStatus = GameInfoStatus.NONE;
 
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+
         gameStatus = new GameStatus();
-        gameStatus.setUserName("Pim");
+        gameStatus.setUserName(sharedPref.getString("user", "user0"));
         gameStatus.setAvailableHints(3);
         gameStatus.setCurrentQuestion(1);
-        gameStatus.setHighScore(10);
+        gameStatus.setHighScore(sharedPref.getInt("highscore", 0));
         gameStatus.setScore(0);
         gameStatus.setWrongAnswers(0);
 

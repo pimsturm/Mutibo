@@ -4,24 +4,24 @@ import mutiboclient.moviesets.org.unsafe.EasyHttpClient;
 import retrofit.RestAdapter;
 import retrofit.client.ApacheClient;
 
-public class RatingSvc {
-    private static RatingSvcApi ratingSvc_;
+public class UserSvc {
+    private static UserSvcApi userSvc_;
     public static final String CLIENT_ID = "mobile";
 
-    public static synchronized RatingSvcApi init(String server, String user,
-                                                String pass) {
+    public static synchronized UserSvcApi init(String server, String user,
+                                                 String pass) {
 
-        ratingSvc_ = new SecuredRestBuilder()
-                .setLoginEndpoint(server + RatingSvcApi.TOKEN_PATH)
+        userSvc_ = new SecuredRestBuilder()
+                .setLoginEndpoint(server + UserSvcApi.TOKEN_PATH)
                 .setUsername(user)
                 .setPassword(pass)
                 .setClientId(CLIENT_ID)
                 .setClient(
                         new ApacheClient(new EasyHttpClient()))
                 .setEndpoint(server).setLogLevel(RestAdapter.LogLevel.FULL).build()
-                .create(RatingSvcApi.class);
+                .create(UserSvcApi.class);
 
 
-        return ratingSvc_;
+        return userSvc_;
     }
 }

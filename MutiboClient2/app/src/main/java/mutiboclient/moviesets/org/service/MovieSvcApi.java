@@ -13,6 +13,7 @@ public interface MovieSvcApi {
     public static final String MOVIE_SVC_PATH = "/movie";
     public static final String MOVIE_DATA_PATH = MOVIE_SVC_PATH + "/{id}";
     public static final String MOVIE_DATA_USED_PATH = MOVIE_SVC_PATH + "/used";
+    public static final String TOKEN_PATH = "/oauth/token";
 
 
     public static final String TITLE_PARAMETER = "title";

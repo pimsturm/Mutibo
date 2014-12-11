@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //demoData();
-        startService(new Intent(getBaseContext(), MutiboSyncService.class));
+        //startService(new Intent(getBaseContext(), MutiboSyncService.class));
         final Button btnStartGame = (Button) findViewById(R.id.btnStartGame);
 
         btnStartGame.setOnClickListener(new View.OnClickListener() {
@@ -41,6 +41,16 @@ public class MainActivity extends Activity {
                 Intent showMovieSets = new Intent(MainActivity.this, Movies.class);
                 startActivity(showMovieSets);
 
+            }
+
+        });
+
+        final Button btnShowLogin = (Button) findViewById(R.id.btnShowLogin);
+        btnShowLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, LoginScreenActivity.class);
+                startActivity(i);
             }
 
         });

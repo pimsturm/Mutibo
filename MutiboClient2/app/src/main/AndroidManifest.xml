@@ -30,6 +30,11 @@
             android:name=".Movies"
             android:label="Movie sets ratings" >
         </activity>
+        <activity
+            android:name=".LoginScreenActivity"
+            android:label="Log in" >
+        </activity>
+
         <provider
             android:authorities="mutiboclient.moviesets.org.contentprovider.MutiboProvider"
             android:multiprocess="true"

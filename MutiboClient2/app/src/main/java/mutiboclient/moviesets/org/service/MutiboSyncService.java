@@ -23,9 +23,24 @@ import mutiboclient.moviesets.org.mutibo.Rating;
 
 public class MutiboSyncService extends Service {
     private static final String TAG = "MutiboSyncService";
+    private String user;
+    private String password;
+    private Uri server;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Uri serverExtra = intent.getData();
+        if (serverExtra != null) {
+            server = serverExtra;
+        }
+        String userExtra = intent.getStringExtra("user");
+        if (userExtra != null) {
+            user = userExtra;
+        }
+        String passwordExtra = intent.getStringExtra("password");
+        if (passwordExtra != null) {
+            password = passwordExtra;
+        }
         new MutiboSyncTask().execute();
         return Service.START_FLAG_REDELIVERY;
     }
@@ -38,9 +53,9 @@ public class MutiboSyncService extends Service {
     private class MutiboSyncTask extends AsyncTask<Void, Void, Boolean> {
 
         private static final String TAG = "MutiboSyncService$MutiboSyncTask";
-        MovieSvcApi movieSvc = MovieSvc.init("http://10.0.2.2:8080", "user", "pass");
-        MovieSetSvcApi movieSetSvc = MovieSetSvc.init("http://10.0.2.2:8080", "user", "pass");
-        RatingSvcApi ratingSvc = RatingSvc.init("http://10.0.2.2:8080", "user", "pass");
+        MovieSvcApi movieSvc = MovieSvc.init(server.toString(), user, password);
+        MovieSetSvcApi movieSetSvc = MovieSetSvc.init(server.toString(), user, password);
+        RatingSvcApi ratingSvc = RatingSvc.init(server.toString(), user, password);
 
         @Override
         protected Boolean doInBackground(Void... params) {

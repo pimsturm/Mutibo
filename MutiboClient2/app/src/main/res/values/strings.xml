@@ -21,5 +21,10 @@
     <string name="game_hints_count">Hints:</string>
     <string name="game_wrong">Wrong:</string>
     <string name="game_hint">Hint</string>
+    <string name="userName">User name</string>
+    <string name="password">Password</string>
+    <string name="login">Log in</string>
+    <string name="server">Server</string>
+    <string name="localhost">https://10.0.2.2:8443</string>
 
 </resources>

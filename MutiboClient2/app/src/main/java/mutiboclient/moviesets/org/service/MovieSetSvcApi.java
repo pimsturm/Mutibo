@@ -11,6 +11,7 @@ import retrofit.http.POST;
 public interface MovieSetSvcApi {
     // The path where we expect the MovieSetSvc to live
     public static final String MOVIESET_SVC_PATH = "/movieset";
+    public static final String TOKEN_PATH = "/oauth/token";
 
     @GET(MOVIESET_SVC_PATH)
     public Collection<MovieSet> getMovieSetList();

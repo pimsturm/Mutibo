@@ -12,26 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="3dp" >
-
-        <Button
-            android:id="@+id/movie_listview_create"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:onClick="test"
-            android:text="@string/movie_list_button_label_add" />
-
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/movie_listview_tags_filter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/movie_list_filter_hint" >
-
-        <requestFocus />
-    </EditText>
 
     <ListView
         android:id="@+id/android:list"

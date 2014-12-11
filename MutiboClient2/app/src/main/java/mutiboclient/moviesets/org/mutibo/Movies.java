@@ -56,7 +56,7 @@ public class Movies extends Activity implements LoaderManager.LoaderCallbacks<Cu
                 new String[]{MovieSetTable.COLUMN_ID,
                         "movie1",
                         MovieSetTable.COLUMN_AVG_RATING},
-                new int[] {R.id.movie_listview_custom_row_KEY_ID_textView,
+                new int[]{R.id.movie_listview_custom_row_KEY_ID_textView,
                         R.id.movie_listview_custom_row_title_textView,
                         R.id.movie_listview_custom_row_creation_time_textView}, 0);
 
@@ -64,7 +64,6 @@ public class Movies extends Activity implements LoaderManager.LoaderCallbacks<Cu
 
         getLoaderManager().initLoader(0, null, this);
 
-        //new HttpGetTask().execute();
     }
 
     @Override
@@ -87,10 +86,10 @@ public class Movies extends Activity implements LoaderManager.LoaderCallbacks<Cu
         CursorLoader loader = new CursorLoader(
                 this,
                 MutiboProvider.CONTENT_RATING_MOVIESETS_URI,
-                null,   //new String[]{MovieSetTable.COLUMN_ID, MovieSetTable.COLUMN_AVG_RATING}
-                        null,
-                        null,
-                        null);
+                null,
+                null,
+                null,
+                null);
         return loader;
     }
 
@@ -104,36 +103,4 @@ public class Movies extends Activity implements LoaderManager.LoaderCallbacks<Cu
         mAdapter.swapCursor(null);
     }
 
-    public void test(View view) {
-    }
-
-    private class HttpGetTask extends AsyncTask<Void, Void, List<String>> {
-        MovieSvcApi movieSvc = MovieSvc.init("http://10.0.2.2:8080", "user", "pass");
-        private static final String TAG = "HttpGetTask";
-
-        @Override
-        protected List<String> doInBackground(Void... params) {
-            try {
-                Collection<Movie> movies = movieSvc.getMovieList();
-                List<String> titles = new ArrayList<String>();
-                for (Movie movie : movies) {
-                    titles.add(movie.getMovieTitle());
-                }
-                return titles;
-            } catch (Exception e) {
-                Log.e(TAG, "Error invoking callable in AsyncTask HttpGetTask", e);
-            }
-            return null;
-        }
-
-        ListView myList = (ListView) findViewById(android.R.id.list);
-
-        @Override
-        protected void onPostExecute(List<String> result) {
-
-            myList.setAdapter(new ArrayAdapter<String>(Movies.this, R.layout.movie_listview_custom_row,
-                    R.id.movie_listview_custom_row_title_textView, result));
-
-        }
-    }
 }
